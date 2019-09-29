@@ -1,3 +1,8 @@
+var selectedLaunch;
+const flyOptions = {
+    duration: 1.5
+};
+
 function displayLaunches(launchRaw, viewer) {
     const launchLocations = launchRaw.launches.map(i => {
         var location = i.location;
@@ -49,6 +54,10 @@ function createViz(token) {
         selectionIndicator: false,
         timeline: false,
         shouldAnimate: false
+    });
+    viewer.selectedEntityChanged.addEventListener((selected) => {
+        selectedLaunch = selected;
+        viewer.flyTo(selectedLaunch, flyOptions);
     });
     getLaunches(viewer);
 }
