@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <link href="https://cesiumjs.org/releases/1.61/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cesiumjs.org/releases/1.61/Build/Cesium/Cesium.js"></script>
-  <script src="/js/client.js"></script>
-</head>
-<body>
-  <div id="cesiumContainer" style="width: 700px; height:400px"></div>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <link href="https://cesiumjs.org/releases/1.61/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+        <link href="/css/styles.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cesiumjs.org/releases/1.61/Build/Cesium/Cesium.js"></script>
+        <script src="/js/client.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="left">
+                <div id="title">Launch Explorer</div>
+                <div id="cesiumContainer"></div>
+                <div id="streetView"><div id="tempLabel">streetview stuff here</div></div>
+            </div>
+            <div id="listSpacer"></div>
+            <div id="right">
+                <div id="launchList"></div>
+            </div>
+        </div>
+    </body>
 </html>
 
