@@ -1,12 +1,56 @@
 var launchData;
 var selectedLaunch;
+var cesiumEntities = {};
 const dateRegex = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const flyOptions = {
     duration: 2.5
 };
 
-//TODO: display list of launches, with selection
 //TODO (future): streetview embed based on lat/long
+
+// Draw the current values in the launchData list to the viewer
+function updateMapDisplay(viewer) {
+    const imageDimension = 80;
+    launchData.forEach(l => {
+        var entity = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(l.long, l.lat),
+            billboard: {
+                image: "/images/rocket.png",
+                width: imageDimension,
+                height: imageDimension
+            },
+            label: {
+                text: l.rocketName,
+                font: "8pt monospace",
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                outlineWidth : 2,
+                verticalOrigin: Cesium.VerticalOrigin.TOP,
+                pixelOffset: new Cesium.Cartesian2(0, imageDimension/2)
+            }
+        });
+        var launchId = uuidv4();
+        l.uuid = launchId;
+        entity._uuid = launchId;
+        cesiumEntities[launchId] = entity;
+    });
+}
+
+// Return a div containing the information about this launch
+function launchNode(viewer, launchElement) {
+    //TODO: extract information instead of just dumping the map
+    console.log(cesiumEntities[launchElement.uuid])
+    return $("<div/>")
+                .addClass("launchNode")
+                .text(JSON.stringify(launchElement)).click(() => select(viewer, cesiumEntities[launchElement.uuid]));;
+}
+
+// Reflect the current values in the launchData list on the display
+function updateListDisplay(viewer) {
+    var list = $("#launchList");
+    launchData.forEach(l => {
+        list.append( launchNode(viewer, l) );
+    });
+}
 
 // launchLibrary seems to return dates in a non-compliant version of ISO
 // that javascript can't recognize. This function tries to return a Date
@@ -45,7 +89,6 @@ function lookupById(uuid) {
 function select(viewer, element) {
     if (element) {
         selectedLaunch = lookupById(element._uuid);
-        console.log(selectedLaunch);
         viewer.flyTo(element, flyOptions);
     } else {
         console.error("Selected element was null or undefined");
@@ -71,28 +114,8 @@ function displayLaunches(launchRaw, viewer) {
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
-    const imageDimension = 80;
-    launchData.forEach(l => {
-        var entity = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(l.long, l.lat),
-            billboard: {
-                image: "/images/rocket.png",
-                width: imageDimension,
-                height: imageDimension
-            },
-            label: {
-                text: l.rocketName,
-                font: "8pt monospace",
-                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-                outlineWidth : 2,
-                verticalOrigin: Cesium.VerticalOrigin.TOP,
-                pixelOffset: new Cesium.Cartesian2(0, imageDimension/2)
-            }
-        });
-        var launchId = uuidv4();
-        entity._uuid = launchId;
-        l.uuid = launchId;
-    });
+    updateMapDisplay(viewer);
+    updateListDisplay(viewer);
 }
 
 function getLaunches(viewer) {
