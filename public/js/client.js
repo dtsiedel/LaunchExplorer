@@ -37,11 +37,18 @@ function updateMapDisplay(viewer) {
 
 // Return a div containing the information about this launch
 function launchNode(viewer, launchElement) {
-    //TODO: extract information instead of just dumping the map
-    console.log(cesiumEntities[launchElement.uuid])
+    const date = $("<div/>")
+        .addClass("launchNodeDate")
+        .text(launchElement.timeStart);
+    const name = $("<div/>")
+        .addClass("launchNodeName")
+        .text(launchElement.launchName);
+
     return $("<div/>")
-                .addClass("launchNode")
-                .text(JSON.stringify(launchElement)).click(() => select(viewer, cesiumEntities[launchElement.uuid]));;
+            .addClass("launchNode")
+            .append(date)
+            .append(name)
+            .click(() => select(viewer, cesiumEntities[launchElement.uuid]));;
 }
 
 // Reflect the current values in the launchData list on the display
@@ -109,8 +116,8 @@ function displayLaunches(launchRaw, viewer) {
             launchName: launch.name,
             padName: pad.name,
             rocketName: rocket.name,
-            videoLink: launch.vidUrl,
-            timeStart: parseLaunchDate(launch.isostart)
+            videoLink: launch.vidURLs[0],
+            timeStart: new Date(launch.windowstart).toLocaleString("en-US"),
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
