@@ -58,9 +58,9 @@ body {
     display: inline-block;
 }
 
-#listSpacer {
-    width: 1%;
-    height: 100%;
+.launchListSpacer {
+    width: 100%;
+    height: 1%;
     display: inline-block;
 }
 
@@ -71,11 +71,24 @@ body {
     display: inline-block;
 }
 
+#selectedLaunch {
+    width: 100%;
+    height: 40%;
+    text-align: center;
+    border: 2px solid #DBEDF3;
+    background-color: #00010f;
+}
+
+#selectedLabel {
+    display: inline-block;
+    line-height: 15em;
+    font-size: 125%;
+}
+
 #launchListContainer {
     width: 100%;
-    height: 100%;
+    height: 60%;
     min-width: 399px;
-    background-color: #00010f;
     display: inline-block;
     overflow-y: hidden;
     overflow-x: hidden;
@@ -83,14 +96,14 @@ body {
 
 #launchListTitle {
     width: 100%;
-    height: 5%;
+    height: 4%;
     min-width: 399px;
     font-size: 150%;
 }
 
 #launchList {
     width: 100%;
-    height: 95%;
+    height: 94%;
     min-width: 399px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -104,6 +117,7 @@ body {
     border: 2px solid #DBEDF3;
     margin-bottom: 0.5em;
     cursor: pointer;
+    background-color: #00010f;
 }
 
 .launchNodeDate {

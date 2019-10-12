@@ -20,7 +20,7 @@ function updateMapDisplay(viewer) {
                 height: imageDimension
             },
             label: {
-                text: l.rocketName,
+                text: "", // no text for now, possibly add back in
                 font: "8pt monospace",
                 style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                 outlineWidth : 2,
@@ -39,7 +39,7 @@ function updateMapDisplay(viewer) {
 function launchNode(viewer, launchElement) {
     const date = $("<div/>")
         .addClass("launchNodeDate")
-        .text(launchElement.timeStart);
+        .text("Launch Window Opens: "+launchElement.timeStart);
     const name = $("<div/>")
         .addClass("launchNodeName")
         .text(launchElement.launchName);
@@ -117,7 +117,7 @@ function displayLaunches(launchRaw, viewer) {
             padName: pad.name,
             rocketName: rocket.name,
             videoLink: launch.vidURLs[0],
-            timeStart: new Date(launch.windowstart).toLocaleString("en-US"),
+            timeStart: new Date(launch.windowstart).toLocaleString(),
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
