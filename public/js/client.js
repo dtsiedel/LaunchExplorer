@@ -125,12 +125,9 @@ function createStreamButton(videoLink) {
 
     if (videoLink) {
         linkDiv
-            .addClass("available");
-        const a = $("<a/>")
-                    .text("View Launch Stream Live!")
-                    .attr("target", "_blank") // open in new tab
-                    .attr("href", videoLink);
-        linkDiv.append(a);
+            .addClass("available")
+            .text("View Launch Live!")
+            .click(() => window.open(videoLink));
     } else {
         linkDiv
             .addClass("unavailable")

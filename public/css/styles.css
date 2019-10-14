@@ -212,6 +212,10 @@ body {
     justify-content: center;
 }
 
+.available:hover {
+    color: #330033;
+}
+
 .available {
     background-color: #5bbf76;
     cursor: pointer;
@@ -220,8 +224,4 @@ body {
 .unavailable {
     background-color: #bf6a5b;
     cursor: not-allowed;
-}
-
-a {
-    color: #DBEDF3;
 }
