@@ -1,5 +1,4 @@
 var launchData;
-var selectedLaunch;
 var cesiumEntities = {};
 const dateRegex = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const flyOptions = {
@@ -57,6 +56,7 @@ function updateListDisplay(viewer) {
     launchData.forEach(l => {
         list.append( launchNode(viewer, l) );
     });
+    list.append($("<div/>").addClass("listTrailing"));
 }
 
 // launchLibrary seems to return dates in a non-compliant version of ISO
@@ -90,13 +90,105 @@ function lookupById(uuid) {
     return (filtered.length < 1) ? null : filtered[0];
 }
 
+// Return a <tr>, with three <td> elements in it, with text given by the
+// two parameters. The extra td is a spacer in the middle
+function selectedLaunchRow(key, value) {
+    if (!value) { value = "Unknown"; }
+    const keyTd = $("<td/>")
+                    .addClass("tdLeft")
+                    .append($("<div/>")
+                                .addClass("fullSize")
+                                .text(key)
+                    );
+    const valueTd = $("<td/>")
+                    .addClass("tdRight")
+                    .append($("<div/>")
+                                .addClass("fullSize")
+                                .text(value)
+                    );
+    const spacerTd = $("<td/>").addClass("tdSpacer");
+
+    const row = $("<tr/>");
+    row.append(keyTd);
+    row.append(spacerTd);
+    row.append(valueTd);
+
+    return row;
+}
+
+// encapsulate logic to check for existence of video link before 
+function createStreamButton(videoLink) {
+    const containerDiv = $("<div/>").addClass("linkContainer");
+    const spacerAbove = $("<div/>").addClass("streamSpacer");
+    const spacerBelow = $("<div/>").addClass("streamSpacer");
+    const linkDiv = $("<div/>").addClass("streamLink");
+
+    if (videoLink) {
+        linkDiv
+            .addClass("available");
+        const a = $("<a/>")
+                    .text("View Launch Stream Live!")
+                    .attr("target", "_blank") // open in new tab
+                    .attr("href", videoLink);
+        linkDiv.append(a);
+    } else {
+        linkDiv
+            .addClass("unavailable")
+            .text("Launch Stream Unavailable");
+    }
+    containerDiv.append(spacerAbove);
+    containerDiv.append(linkDiv);
+    containerDiv.append(spacerBelow);
+
+    return containerDiv;
+}
+
+// display the given launch on the "selected viewer"
+function updateSelectedDisplay(selectedLaunch) {
+    var selectedDiv = $("#selectedLaunch");
+    selectedDiv.empty();
+
+    const title = $("<div/>")
+                    .addClass("selectedTitle")
+                    .text(selectedLaunch.launchName);
+    selectedDiv.append(title);
+
+    const table = $("<table/>")
+                    .attr("id", "selectedTable");
+
+    table.append(
+        selectedLaunchRow("Pad Location: ", selectedLaunch.location)
+    )
+    table.append(
+        selectedLaunchRow("Agency: ", selectedLaunch.agencyName)
+    )
+    table.append(
+        selectedLaunchRow("Window Start: ", selectedLaunch.timeStart)
+    )
+    table.append(
+        selectedLaunchRow("Window End: ", selectedLaunch.timeStop)
+    )
+    table.append(
+        selectedLaunchRow("Mission Name: ", selectedLaunch.missionName)
+    )
+    table.append(
+        selectedLaunchRow("Mission Type: ", selectedLaunch.missionType)
+    )
+
+    selectedDiv.append(table);
+
+    const streamButton = createStreamButton(selectedLaunch.videoLink);
+    selectedDiv.append(streamButton);
+}
+
 // Called whenever the user selects a new launch by any means. Sets the
 // selectedLaunch variable and flies the Cesium viewer to the selected
 // element.
 function select(viewer, element) {
     if (element) {
-        selectedLaunch = lookupById(element._uuid);
+        var selectedLaunch = lookupById(element._uuid);
         viewer.flyTo(element, flyOptions);
+        updateSelectedDisplay(selectedLaunch);
     } else {
         console.error("Selected element was null or undefined");
     }
@@ -108,16 +200,25 @@ function displayLaunches(launchRaw, viewer) {
     // latest.
     launchData = launchRaw.launches.map(launch => {
         const location = launch.location;
-        const pad = location.pads[0];
+        const pad = (location.pads.length > 0) ? location.pads[0] : {};
+        const missions = launch.missions;
+        const mission = (missions.length > 0) ? missions[0] : {};
         const rocket = launch.rocket;
+        const agency = launch.lsp;
         return {
             lat: pad.latitude,
             long: pad.longitude,
+            location: location.name,
             launchName: launch.name,
             padName: pad.name,
             rocketName: rocket.name,
+            missionName: mission.name,
+            missionType: mission.typeName,
+            agencyName: agency.name,
+            country: agency.countryCode,
             videoLink: launch.vidURLs[0],
             timeStart: new Date(launch.windowstart).toLocaleString(),
+            timeStop: new Date(launch.windowend).toLocaleString(),
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
