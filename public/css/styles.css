@@ -93,6 +93,12 @@ body {
     font-size: 150%;
     text-align: left;
     float: right;
+    color: #faf373;
+}
+
+.underline {
+    width: max-content;
+    border-bottom: 1px solid;
 }
 
 #selectedTable {

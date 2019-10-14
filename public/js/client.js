@@ -150,7 +150,10 @@ function updateSelectedDisplay(selectedLaunch) {
 
     const title = $("<div/>")
                     .addClass("selectedTitle")
-                    .text(selectedLaunch.launchName);
+                        .append($("<div/>")
+                            .text(selectedLaunch.launchName)
+                            .addClass("underline")
+                        );
     selectedDiv.append(title);
 
     const table = $("<table/>")
