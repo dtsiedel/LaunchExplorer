@@ -46,12 +46,6 @@ body {
     width: 100%;
     height: 40%;
     vertical-align: top;
-
-    /* temp properties */
-    background-color: red;
-    color: white;
-    line-height: 15em;
-    font-size: 150%;
 }
 
 #tempLabel {
@@ -184,7 +178,7 @@ body {
 
 .listTrailing {
     width: 100%;
-    height: 10%;
+    height: 30%;
 }
 
 .linkContainer {

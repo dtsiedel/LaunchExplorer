@@ -8,6 +8,10 @@ const port = 3000;
 // read synchronously since this is only during startup. Strip newline.
 var token = fs.readFileSync('token.txt', 'utf8');
 token = token.replace(/\r?\n|\r/g, "");
+
+var mapsToken = fs.readFileSync('maps_token.txt', 'utf8');
+token = token.replace(/\r?\n|\r/g, "");
+
 var app = express();
 
 const launchHost = 'launchlibrary.net';
@@ -43,6 +47,10 @@ app.get('/', (req, res) => {
 
 app.get('/cesiumToken', (req, res) => {
     res.send(token);
+});
+
+app.get('/mapsToken', (req, res) => {
+    res.send(mapsToken);
 });
 
 app.get('/launches', (req, res) => {

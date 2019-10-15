@@ -5,7 +5,9 @@ const flyOptions = {
     duration: 2.5
 };
 
-//TODO (future): streetview embed based on lat/long
+//TODO: orient streetview towards launch
+//TODO: Handle no nearby launch with some text, and unset any google styles
+//TODO: instead of zooming to the launch, get a rectangle around it (zoomed out) and use that
 
 // Draw the current values in the launchData list to the viewer
 function updateMapDisplay(viewer) {
@@ -181,6 +183,28 @@ function updateSelectedDisplay(selectedLaunch) {
     selectedDiv.append(streamButton);
 }
 
+// When a launch is selected, try to find a streetview for it
+function updateStreetView(selectedLaunch) {
+    $("#streetView").empty();
+    const point = new google.maps.LatLng(selectedLaunch.lat, selectedLaunch.long);
+    const webService = new google.maps.StreetViewService();
+
+    webService.getPanoramaByLocation(point, 5000 , (data) => {
+        if (data && data.location && data.location.latLng) {
+            const panorama =
+                new google.maps.StreetViewPanorama(document.getElementById('streetView'));
+            panorama.setPano(data.location.pano);
+            panorama.setPov({
+                heading: 34,
+                pitch: 10
+            });
+            panorama.setVisible(true);
+        } else {
+            console.log("Invalid: " + data);
+        }
+    });
+}
+
 // Called whenever the user selects a new launch by any means. Sets the
 // selectedLaunch variable and flies the Cesium viewer to the selected
 // element.
@@ -189,6 +213,7 @@ function select(viewer, element) {
         var selectedLaunch = lookupById(element._uuid);
         viewer.flyTo(element, flyOptions);
         updateSelectedDisplay(selectedLaunch);
+        updateStreetView(selectedLaunch);
     } else {
         console.error("Selected element was null or undefined");
     }
@@ -261,6 +286,31 @@ function getToken() {
     });
 }
 
+function loadScript(url){
+    var script = document.createElement("script")
+    script.type = "text/javascript";
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
+
+function initMap( ) {
+    $("#streetView").empty();
+}
+
+function initGoogleMaps(data) {
+    const url = "https://maps.googleapis.com/maps/api/js?key="+data+"&callback=initMap";
+    loadScript(url);
+}
+
+function setupGoogleMaps() {
+    $.ajax({
+        url: "/mapsToken",
+        success: initGoogleMaps,
+        error: (_, __, error) => console.error(error)
+    });
+}
+
 $(document).ready(() => {
+    setupGoogleMaps();
     getToken();
 });
