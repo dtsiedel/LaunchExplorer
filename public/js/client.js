@@ -38,9 +38,11 @@ function updateMapDisplay(viewer) {
 
 // Return a div containing the information about this launch
 function launchNode(viewer, launchElement) {
+    const start = launchElement.isTBD ? "TBD" : launchElement.timeStart;
+    const stop = launchElement.isTBD ? "TBD" : launchElement.timestop;
     const date = $("<div/>")
         .addClass("launchNodeDate")
-        .text("Launch Window Opens: "+launchElement.timeStart);
+        .text("Launch Window Opens: " + start);
     const name = $("<div/>")
         .addClass("launchNodeName")
         .text(launchElement.launchName);
@@ -157,6 +159,8 @@ function updateSelectedDisplay(selectedLaunch) {
 
     const table = $("<table/>")
                     .attr("id", "selectedTable");
+    const start = selectedLaunch.isTBD ? "TBD" : selectedLaunch.timeStart;
+    const stop = selectedLaunch.isTBD ? "TBD" : selectedLaunch.timeStop;
 
     table.append(
         selectedLaunchRow("Pad Location: ", selectedLaunch.location)
@@ -165,10 +169,10 @@ function updateSelectedDisplay(selectedLaunch) {
         selectedLaunchRow("Agency: ", selectedLaunch.agencyName)
     )
     table.append(
-        selectedLaunchRow("Window Start: ", selectedLaunch.timeStart)
+        selectedLaunchRow("Window Start: ", start)
     )
     table.append(
-        selectedLaunchRow("Window End: ", selectedLaunch.timeStop)
+        selectedLaunchRow("Window End: ", stop)
     )
     table.append(
         selectedLaunchRow("Mission Name: ", selectedLaunch.missionName)
@@ -244,6 +248,7 @@ function displayLaunches(launchRaw, viewer) {
             videoLink: launch.vidURLs[0],
             timeStart: new Date(launch.windowstart).toLocaleString(),
             timeStop: new Date(launch.windowend).toLocaleString(),
+            isTBD: launch.tbdtime === 1 || launch.tdbdate === 1
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
