@@ -17,7 +17,7 @@ var app = express();
 const launchHost = 'launchlibrary.net';
 const launchVersion = '1.4';
 const launchEndpoint = 'launch';
-const launchCount = '10';
+const launchCount = '25';
 const launchPath = `/${launchVersion}/${launchEndpoint}/next/${launchCount}`
 
 const launchOptions = {
