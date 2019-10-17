@@ -2,12 +2,13 @@ var launchData;
 var cesiumEntities = {};
 const dateRegex = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const flyOptions = {
-    duration: 2.5
+    duration: 2.5,
+    offset: new Cesium.HeadingPitchRange(0, Math.PI / 2, -2500)
 };
 
 //TODO: orient streetview towards launch
 //TODO: Handle no nearby launch with some text, and unset any google styles
-//TODO: instead of zooming to the launch, get a rectangle around it (zoomed out) and use that
+//TODO: allow for TBD time but date still valid
 
 // Draw the current values in the launchData list to the viewer
 function updateMapDisplay(viewer) {
