@@ -7,7 +7,6 @@ const flyOptions = {
 };
 
 //TODO: Handle no nearby launch with some text, and unset any google styles
-//TODO: allow for TBD time but date still valid
 //TODO: CSS tweaks for long names squishing labels in selected panel
 
 // heading from (lat1, long1) to (lat2, long2). Based on:
@@ -23,6 +22,18 @@ function getHeading(lat1, long1, lat2, long2) {
     const x = Math.cos(l2) * Math.sin(deltaLong);
     const y = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(deltaLong);
     return normalizeDegrees(toDegrees(Math.atan2(x, y)) + 180);
+}
+
+// return a string representing the launch, based on whether the date, time, or
+// neither is not yet set
+function launchTimeString(date, timeTbd, dayTbd) {
+    if (dayTbd) {
+        return "TBD";
+    } else if(timeTbd) {
+        return date.toLocaleDateString();
+    } else {
+        return date.toLocaleTimeString();
+    }
 }
 
 // Draw the current values in the launchData list to the viewer
@@ -54,8 +65,12 @@ function updateMapDisplay(viewer) {
 
 // Return a div containing the information about this launch
 function launchNode(viewer, launchElement) {
-    const start = launchElement.isTBD ? "TBD" : launchElement.timeStart;
-    const stop = launchElement.isTBD ? "TBD" : launchElement.timestop;
+    const start = launchTimeString(launchElement.timeStart,
+                                   launchElement.timeTbd,
+                                   launchElement.dayTbd);
+    const stop = launchTimeString(launchElement.timeStop,
+                                  launchElement.timeTbd,
+                                  launchElement.dayTbd);
     const date = $("<div/>")
         .addClass("launchNodeDate")
         .text("Launch Window Opens: " + start);
@@ -175,8 +190,12 @@ function updateSelectedDisplay(selectedLaunch) {
 
     const table = $("<table/>")
                     .attr("id", "selectedTable");
-    const start = selectedLaunch.isTBD ? "TBD" : selectedLaunch.timeStart;
-    const stop = selectedLaunch.isTBD ? "TBD" : selectedLaunch.timeStop;
+    const start = launchTimeString(selectedLaunch.timeStart,
+                                   selectedLaunch.timeTbd,
+                                   selectedLaunch.dayTbd);
+    const stop = launchTimeString(selectedLaunch.timeStop,
+                                  selectedLaunch.timeTbd,
+                                  selectedLaunch.dayTbd);
 
     table.append(
         selectedLaunchRow("Pad Location: ", selectedLaunch.location)
@@ -265,9 +284,10 @@ function displayLaunches(launchRaw, viewer) {
             agencyName: agency.name,
             country: agency.countryCode,
             videoLink: launch.vidURLs[0],
-            timeStart: new Date(launch.windowstart).toLocaleString(),
-            timeStop: new Date(launch.windowend).toLocaleString(),
-            isTBD: launch.tbdtime === 1 || launch.tdbdate === 1
+            timeStart: new Date(launch.windowstart),
+            timeStop: new Date(launch.windowend),
+            timeTbd: launch.tbdtime === 1,
+            dayTbd: launch.tdbdate === 1
         };
     }).sort((a,b)=>a.timeStart-b.timeStart);
 
