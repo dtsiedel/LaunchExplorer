@@ -48,6 +48,24 @@ body {
     vertical-align: top;
 }
 
+.panoramaMissing {
+    width: 60%;
+    height: 60%;
+    margin: auto;
+    color: #bf6a5b;
+    font-size: 130%;
+}
+
+.missingSpacerBottom {
+    width: 100%;
+    height: 5%;
+}
+
+.missingSpacerTop {
+    width: 100%;
+    height: 35%;
+}
+
 #tempLabel {
     display: inline-block;
 }

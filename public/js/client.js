@@ -6,8 +6,8 @@ const flyOptions = {
     offset: new Cesium.HeadingPitchRange(0, Math.PI / 2, -2500)
 };
 
-//TODO: Handle no nearby launch with some text, and unset any google styles
 //TODO: CSS tweaks for long names squishing labels in selected panel
+//TODO: put a marker on the panorama for where the launch will be
 
 // heading from (lat1, long1) to (lat2, long2). Based on:
 // https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude/
@@ -222,7 +222,19 @@ function updateSelectedDisplay(selectedLaunch) {
     selectedDiv.append(streamButton);
 }
 
-// When a launch is selected, try to find a streetview for it
+// display the message that we couldn't find a nearby panorama
+function displayMissingPanorama() {
+    const missingDiv = $("<div/>")
+                            .addClass("panoramaMissing")
+                            .text("No nearby StreetView to display.");
+    $("#streetView").css("background-color", "inherit");
+    $("#streetView").append($("<div/>").addClass("missingSpacerTop"));
+    $("#streetView").append(missingDiv);
+    $("#streetView").append($("<div/>").addClass("missingSpacerBottom"));
+}
+
+// When a launch is selected, try to find a streetview for it, else show a message
+// indicating that there is not one nearby.
 function updateStreetView(selectedLaunch) {
     $("#streetView").empty();
     const point = new google.maps.LatLng(selectedLaunch.lat, selectedLaunch.long);
@@ -242,7 +254,7 @@ function updateStreetView(selectedLaunch) {
             });
             panorama.setVisible(true);
         } else {
-            console.log("Invalid: " + data);
+            displayMissingPanorama();
         }
     });
 }
