@@ -7,22 +7,12 @@ const flyOptions = {
 };
 
 //TODO: CSS tweaks for long names squishing labels in selected panel
-//TODO: put a marker on the panorama for where the launch will be
 
 // heading from (lat1, long1) to (lat2, long2). Based on:
 // https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude/
 function toDegrees(radians) { return radians * 180 / Math.PI; }
 function toRadians(degrees) { return degrees * Math.PI / 180; }
 function normalizeDegrees(d) { return (d > 360) ? normalizeDegrees(360 - d) : d; }
-function getHeading(lat1, long1, lat2, long2) {
-    const l1 = toRadians(lat1);
-    const l2 = toRadians(lat2);
-    const deltaLong = toRadians(long2 - long1);
-
-    const x = Math.cos(l2) * Math.sin(deltaLong);
-    const y = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(deltaLong);
-    return normalizeDegrees(toDegrees(Math.atan2(x, y)) + 180);
-}
 
 // return a string representing the launch, based on whether the date, time, or
 // neither is not yet set
@@ -247,7 +237,8 @@ function updateStreetView(selectedLaunch) {
             panorama.setPano(data.location.pano);
             const panoLat = data.location.latLng.lat();
             const panoLong = data.location.latLng.lng();
-            const heading = getHeading(selectedLaunch.lat, selectedLaunch.long, panoLat, panoLong);
+
+            const heading = google.maps.geometry.spherical.computeHeading(data.location.latLng, point);
             panorama.setPov({
                 heading: heading,
                 pitch: 10
