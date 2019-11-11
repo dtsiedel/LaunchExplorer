@@ -96,7 +96,6 @@ body {
 #selectedPlaceholder {
     display: inline-block;
     line-height: 15em;
-    font-size: 125%;
 }
 
 .selectedTitle {
