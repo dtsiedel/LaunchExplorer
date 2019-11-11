@@ -116,8 +116,9 @@ function lookupById(uuid) {
 }
 
 // Return a <tr>, with three <td> elements in it, with text given by the
-// two parameters. The extra td is a spacer in the middle
-function selectedLaunchRow(key, value) {
+// two parameters. The extra td is a spacer in the middle. The link is
+// an optional parameter to link the value to externally.
+function selectedLaunchRow(key, value, link) {
     if (!value) { value = "Unknown"; }
     const keyTd = $("<td/>")
                     .addClass("tdLeft")
@@ -125,12 +126,23 @@ function selectedLaunchRow(key, value) {
                                 .addClass("fullSize")
                                 .text(key)
                     );
+    var valueInner;
+    if (link) {
+        valueInner = $("<div/>")
+                        .addClass("fullSize")
+                        .append(
+                            $("<a/>")
+                                .attr('href', link)
+                                .attr('target', '_blank')
+                                .text(value));
+    } else {
+        valueInner = $("<div/>")
+                        .addClass("fullSize")
+                        .text(value);
+    }
     const valueTd = $("<td/>")
                     .addClass("tdRight")
-                    .append($("<div/>")
-                                .addClass("fullSize")
-                                .text(value)
-                    );
+                    .append(valueInner);
     const spacerTd = $("<td/>").addClass("tdSpacer");
 
     const row = $("<tr/>");
@@ -191,7 +203,7 @@ function updateSelectedDisplay(selectedLaunch) {
         selectedLaunchRow("Pad Location: ", selectedLaunch.location)
     )
     table.append(
-        selectedLaunchRow("Agency: ", selectedLaunch.agencyName)
+        selectedLaunchRow("Agency: ", selectedLaunch.agencyName, selectedLaunch.agencyLink)
     )
     table.append(
         selectedLaunchRow("Window Start: ", start)
@@ -292,6 +304,7 @@ function displayLaunches(launchRaw, viewer) {
             missionName: mission.name,
             missionType: mission.typeName,
             agencyName: agency.name,
+            agencyLink: agency.wikiURL,
             country: agency.countryCode,
             videoLink: launch.vidURLs[0],
             timeStart: new Date(launch.windowstart),
