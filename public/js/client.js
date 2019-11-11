@@ -238,11 +238,18 @@ function updateStreetView(selectedLaunch) {
             const panoLat = data.location.latLng.lat();
             const panoLong = data.location.latLng.lng();
 
+            var marker = new google.maps.Marker({
+                position: {lat: selectedLaunch.lat, lng: selectedLaunch.long},
+                map: panorama,
+                title: 'Launch'
+            });
+
             const heading = google.maps.geometry.spherical.computeHeading(data.location.latLng, point);
             panorama.setPov({
                 heading: heading,
                 pitch: 10
             });
+            panorama.setZoom(1);
             panorama.setVisible(true);
         } else {
             displayMissingPanorama();
